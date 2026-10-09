@@ -35,6 +35,7 @@ function Reservas() {
           <div className="form__field">
             <label htmlFor="museo">Museo</label>
             <select
+              className="form-select"
               id="museo"
               name="museo"
               value={museo}
@@ -52,30 +53,37 @@ function Reservas() {
             </select>
           </div>
 
-          <div className="form__row">
-            <div className="form__field">
-              <label htmlFor="fecha">Fecha de visita</label>
-              <input
-                type="date"
-                id="fecha"
-                name="fecha"
-                value={fecha}
-                onChange={(e) => setFecha(e.target.value)}
-                required
-              />
+          <div className="row g-3">
+            <div className="col-12 col-md-6">
+              <div className="form__field">
+                <label htmlFor="fecha">Fecha de visita</label>
+                <input
+                  className="form-control"
+                  type="date"
+                  id="fecha"
+                  name="fecha"
+                  value={fecha}
+                  onChange={(e) => setFecha(e.target.value)}
+                  required
+                />
+              </div>
             </div>
-            <div className="form__field">
-              <label htmlFor="personas">Cantidad de personas</label>
-              <input
-                type="number"
-                id="personas"
-                name="personas"
-                min="1"
-                max="20"
-                value={personas}
-                onChange={(e) => setPersonas(e.target.value)}
-                required
-              />
+
+            <div className="col-12 col-md-6">
+              <div className="form__field">
+                <label htmlFor="personas">Cantidad de personas</label>
+                <input
+                  className="form-control"
+                  type="number"
+                  id="personas"
+                  name="personas"
+                  min="1"
+                  max="20"
+                  value={personas}
+                  onChange={(e) => setPersonas(e.target.value)}
+                  required
+                />
+              </div>
             </div>
           </div>
 

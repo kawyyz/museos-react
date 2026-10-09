@@ -42,17 +42,19 @@ function Museos() {
         </p>
       </div>
 
-      <ul className="museums__grid">
+      <ul className="row g-4 list-unstyled p-0 m-0">
         {museos.map((m) => (
-          <li className="museum-card" key={m.id}>
-            <div className="museum-card__cover">{m.sigla}</div>
-            <div className="museum-card__body">
-              <h2 className="museum-card__name">{m.nombre}</h2>
-              <p className="museum-card__meta">{m.zona}</p>
-              <p className="museum-card__desc">{m.desc}</p>
-              <Link className="museum-card__link" to="/reservas">
-                Reservar visita
-              </Link>
+          <li className="col-12 col-sm-6 col-lg-3" key={m.id}>
+            <div className="museum-card h-100">
+              <div className="museum-card__cover">{m.sigla}</div>
+              <div className="museum-card__body">
+                <h2 className="museum-card__name">{m.nombre}</h2>
+                <p className="museum-card__meta">{m.zona}</p>
+                <p className="museum-card__desc">{m.desc}</p>
+                <Link className="museum-card__link" to="/reservas">
+                  Reservar visita
+                </Link>
+              </div>
             </div>
           </li>
         ))}

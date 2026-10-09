@@ -55,7 +55,7 @@ function Tickets() {
         </h1>
 
         {tickets.map((t) => (
-          <div className="ticket-card" key={t.id}>
+          <div className="ticket-card flex-column flex-md-row gap-3" key={t.id}>
             <div className="ticket-info">
               <h3>{t.museo}</h3>
               <p>
