@@ -6,12 +6,14 @@ import Museos from "./pages/Museos";
 import Reservas from "./pages/Reservas";
 import Pagos from "./pages/Pagos";
 import Tickets from "./pages/Tickets";
+import Clientes from "./pages/Clientes";
 
 function App() {
   return (
     <BrowserRouter>
       <Navbar />
       <Routes>
+        <Route path="/clientes" element={<Clientes />} />
         <Route path="/tickets" element={<Tickets />} />
         <Route path="/pagos" element={<Pagos />} />
         <Route path="/reservas" element={<Reservas />} />
