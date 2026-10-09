@@ -332,3 +332,11 @@ ul {
 .form__submit:hover { background: var(--clay-dark); }
 
 
+.payment-container { max-width: 500px; margin: 3rem auto; padding: 2rem; background: white; border: 1px solid var(--sand-line); }
+.payment-summary { background: var(--paper); padding: 1rem; margin-bottom: 2rem; border-radius: 4px; }
+.form-group { margin-bottom: 1rem; }
+.form-group label { display: block; margin-bottom: 0.5rem; font-size: 0.9rem; }
+.form-group input { width: 100%; padding: 0.7rem; border: 1px solid var(--sand-line); }
+.btn-pay { width: 100%; padding: 1rem; background: var(--ink); color: var(--paper); border: none; cursor: pointer; font-weight: 600; font-size: 1rem; }
+
+
