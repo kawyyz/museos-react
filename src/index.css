@@ -301,3 +301,18 @@ ul {
 .site-footer__newsletter-row button:hover {
   background: var(--clay-dark);
 }
+
+.museums { max-width: 72rem; margin: 0 auto; padding: 4rem 2rem; }
+.museums__intro { margin-bottom: 3rem; text-align: center; }
+.museums__tag { color: var(--clay-dark); font-weight: 500; font-size: 0.85rem; margin-bottom: 0.5rem; }
+.museums__title { font-family: var(--font-display); font-size: 2.5rem; margin: 0 0 1rem; }
+.museums__subtitle { color: #5b5648; margin-bottom: 2rem; }
+.museums__grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 2rem; margin: 0; padding: 0; }
+.museum-card { background: white; border: 1px solid var(--sand-line); border-radius: 8px; overflow: hidden; transition: transform 0.2s; }
+.museum-card:hover { transform: translateY(-5px); }
+.museum-card__cover { height: 150px; background: var(--sand); display: flex; align-items: center; justify-content: center; font-size: 3rem; font-weight: 700; color: var(--clay); }
+.museum-card__body { padding: 1.5rem; }
+.museum-card__name { font-family: var(--font-display); font-size: 1.2rem; margin: 0 0 0.5rem; }
+.museum-card__meta { font-size: 0.85rem; color: var(--clay); font-weight: 600; margin-bottom: 0.5rem; }
+.museum-card__desc { font-size: 0.9rem; color: #5b5648; line-height: 1.5; margin-bottom: 1.5rem; }
+.museum-card__link { display: block; text-align: center; padding: 0.7rem; background: var(--ink); color: var(--paper); text-decoration: none; font-size: 0.9rem; font-weight: 500; border-radius: 4px; }
