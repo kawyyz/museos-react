@@ -1,16 +1,65 @@
-# React + Vite
+# MuseoGestión (frontend)
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+Frontend en React del **Sistema de Gestión de Museos**, desarrollado para el ramo Desarrollo Fullstack II (DSY1104). Permite explorar museos, reservar una visita, simular el pago y ver los tickets generados.
 
-Currently, two official plugins are available:
+## Tecnologías
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+- React
+- Vite
+- React Router
 
-## React Compiler
+## Requisitos
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- Node.js (versión LTS recomendada)
+- npm
 
-## Expanding the Oxlint configuration
+## Instalación y ejecución
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and Oxlint's TypeScript related rules in your project.
+```bash
+git clone https://github.com/kawyyz/museos-react.git
+cd museos-react
+npm install
+npm run dev
+```
+
+La aplicación queda disponible en `http://localhost:5173`.
+
+## Páginas
+
+| Ruta | Descripción |
+|---|---|
+| `/` | Inicio con accesos rápidos |
+| `/museos` | Catálogo de museos disponibles |
+| `/reservas` | Formulario de reserva de visita |
+| `/pagos` | Resumen y pago de la reserva |
+| `/tickets` | Entradas generadas |
+| `/clientes` | Perfil del cliente |
+| `/login` | Inicio de sesión |
+
+## Estructura del proyecto
+
+```
+src/
+├── components/   Navbar, Footer y Layout compartido
+├── pages/        Una página por ruta
+├── App.jsx       Definición de rutas
+├── main.jsx      Punto de entrada
+└── index.css     Estilos globales
+```
+
+## Flujo principal
+
+1. El usuario elige un museo en **Museos** y pulsa "Reservar visita".
+2. En **Reservas** completa museo, fecha y cantidad de personas.
+3. En **Pagos** revisa el resumen y confirma el pago.
+4. En **Tickets** ve la entrada generada.
+
+## Integrantes
+
+- Nombre Apellido
+- Nombre Apellido
+- Nombre Apellido
+
+## Estado del proyecto
+
+Proyecto académico. Los datos de museos, tickets y perfil son de ejemplo; aún no hay conexión con el backend de microservicios.
