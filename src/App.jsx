@@ -3,12 +3,14 @@ import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import Dashboard from "./pages/Dashboard";
 import Museos from "./pages/Museos";
+import Reservas from "./pages/Reservas";
 
 function App() {
   return (
     <BrowserRouter>
       <Navbar />
       <Routes>
+        <Route path="/reservas" element={<Reservas />} />
         <Route path="/museos" element={<Museos />} />
         <Route path="/" element={<Dashboard />} />
       </Routes>
