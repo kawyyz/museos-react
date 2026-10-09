@@ -5,12 +5,14 @@ import Dashboard from "./pages/Dashboard";
 import Museos from "./pages/Museos";
 import Reservas from "./pages/Reservas";
 import Pagos from "./pages/Pagos";
+import Tickets from "./pages/Tickets";
 
 function App() {
   return (
     <BrowserRouter>
       <Navbar />
       <Routes>
+        <Route path="/tickets" element={<Tickets />} />
         <Route path="/pagos" element={<Pagos />} />
         <Route path="/reservas" element={<Reservas />} />
         <Route path="/museos" element={<Museos />} />
