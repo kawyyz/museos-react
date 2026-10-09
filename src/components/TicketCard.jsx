@@ -8,7 +8,9 @@ function TicketCard({ museo, fecha, personas }) {
         </p>
         <span className="ticket-status">Pagado &amp; Confirmado</span>
       </div>
-      <button className="btn-print">Descargar PDF</button>
+      <button className="btn-print" onClick={() => window.print()}>
+        Descargar PDF
+      </button>
     </div>
   );
 }
