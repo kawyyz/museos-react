@@ -355,3 +355,9 @@ ul {
 .btn-edit { margin-top: 1.5rem; padding: 0.6rem 1.2rem; background: var(--clay); color: white; border: none; cursor: pointer; }
 
 
+.login-container { max-width: 400px; margin: 100px auto; padding: 2rem; background: white; border: 1px solid var(--sand-line); border-radius: 8px; }
+.login-title { font-family: var(--font-display); text-align: center; margin-bottom: 2rem; }
+.login-btn { width: 100%; padding: 0.8rem; background: var(--ink); color: var(--paper); border: none; cursor: pointer; font-weight: 600; }
+.login-footer { text-align: center; margin-top: 1rem; font-size: 0.85rem; }
+
+
