@@ -1,4 +1,5 @@
 import { useSearchParams } from "react-router-dom";
+import TicketCard from "../components/TicketCard";
 
 const ticketsEjemplo = [
   {
@@ -55,16 +56,12 @@ function Tickets() {
         </h1>
 
         {tickets.map((t) => (
-          <div className="ticket-card flex-column flex-md-row gap-3" key={t.id}>
-            <div className="ticket-info">
-              <h3>{t.museo}</h3>
-              <p>
-                Fecha: {t.fecha} | Personas: {t.personas}
-              </p>
-              <span className="ticket-status">Pagado &amp; Confirmado</span>
-            </div>
-            <button className="btn-print">Descargar PDF</button>
-          </div>
+          <TicketCard
+            key={t.id}
+            museo={t.museo}
+            fecha={t.fecha}
+            personas={t.personas}
+          />
         ))}
       </div>
     </main>

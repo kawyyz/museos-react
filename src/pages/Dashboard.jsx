@@ -36,7 +36,16 @@ function Dashboard() {
           {accesos.map((a) => (
             <li className="col-12 col-sm-6 col-lg-3" key={a.to}>
               <div className="product-card h-100">
-                {/* el contenido interno queda igual */}
+                <div className="product-card__image" data-emoji={a.emoji}></div>
+                <h3 className="product-card__name">{a.nombre}</h3>
+                <p className="product-card__price">{a.desc}</p>
+                <Link
+                  to={a.to}
+                  className="product-card__add"
+                  style={{ textDecoration: "none", textAlign: "center", display: "block" }}
+                >
+                  {a.boton}
+                </Link>
               </div>
             </li>
           ))}

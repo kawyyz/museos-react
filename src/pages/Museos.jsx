@@ -1,37 +1,20 @@
-import { Link } from "react-router-dom";
+import { useState } from "react";
+import MuseoCard from "../components/MuseoCard";
 
 const museos = [
-  {
-    id: 1,
-    sigla: "AC",
-    nombre: "Museo de Arte Contemporáneo",
-    zona: "Santiago Centro",
-    desc: "Colecciones de arte moderno y exposiciones temporales de artistas nacionales.",
-  },
-  {
-    id: 2,
-    sigla: "HN",
-    nombre: "Museo de Historia Natural",
-    zona: "Providencia",
-    desc: "Fósiles, minerales y muestras de flora y fauna de la región.",
-  },
-  {
-    id: 3,
-    sigla: "CT",
-    nombre: "Museo de Ciencia y Tecnología",
-    zona: "Ñuñoa",
-    desc: "Salas interactivas sobre física, astronomía e innovación tecnológica.",
-  },
-  {
-    id: 4,
-    sigla: "AV",
-    nombre: "Museo de Artes Visuales",
-    zona: "Lastarria",
-    desc: "Fotografía, escultura y muestras itinerantes de artistas emergentes.",
-  },
+  { id: 1, sigla: "AC", nombre: "Museo de Arte Contemporáneo", zona: "Santiago Centro", desc: "Colecciones de arte moderno y exposiciones temporales de artistas nacionales." },
+  { id: 2, sigla: "HN", nombre: "Museo de Historia Natural", zona: "Providencia", desc: "Fósiles, minerales y muestras de flora y fauna de la región." },
+  { id: 3, sigla: "CT", nombre: "Museo de Ciencia y Tecnología", zona: "Ñuñoa", desc: "Salas interactivas sobre física, astronomía e innovación tecnológica." },
+  { id: 4, sigla: "AV", nombre: "Museo de Artes Visuales", zona: "Lastarria", desc: "Fotografía, escultura y muestras itinerantes de artistas emergentes." },
 ];
 
 function Museos() {
+  const [busqueda, setBusqueda] = useState("");
+
+  const filtrados = museos.filter((m) =>
+    `${m.nombre} ${m.zona}`.toLowerCase().includes(busqueda.toLowerCase())
+  );
+
   return (
     <main className="museums">
       <div className="museums__intro">
@@ -40,25 +23,32 @@ function Museos() {
         <p className="museums__subtitle">
           Elige un museo para revisar sus datos y reservar tu visita.
         </p>
+        <input
+          type="search"
+          className="form-control mx-auto"
+          style={{ maxWidth: "400px" }}
+          placeholder="Buscar por nombre o zona"
+          value={busqueda}
+          onChange={(e) => setBusqueda(e.target.value)}
+        />
       </div>
 
-      <ul className="row g-4 list-unstyled p-0 m-0">
-        {museos.map((m) => (
-          <li className="col-12 col-sm-6 col-lg-3" key={m.id}>
-            <div className="museum-card h-100">
-              <div className="museum-card__cover">{m.sigla}</div>
-              <div className="museum-card__body">
-                <h2 className="museum-card__name">{m.nombre}</h2>
-                <p className="museum-card__meta">{m.zona}</p>
-                <p className="museum-card__desc">{m.desc}</p>
-                <Link className="museum-card__link" to="/reservas">
-                  Reservar visita
-                </Link>
-              </div>
-            </div>
-          </li>
-        ))}
-      </ul>
+      {filtrados.length === 0 ? (
+        <p className="text-center">No se encontraron museos.</p>
+      ) : (
+        <ul className="row g-4 list-unstyled p-0 m-0">
+          {filtrados.map((m) => (
+            <li className="col-12 col-sm-6 col-lg-3" key={m.id}>
+              <MuseoCard
+                sigla={m.sigla}
+                nombre={m.nombre}
+                zona={m.zona}
+                desc={m.desc}
+              />
+            </li>
+          ))}
+        </ul>
+      )}
     </main>
   );
 }
