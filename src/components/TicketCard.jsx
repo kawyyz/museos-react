@@ -1,4 +1,7 @@
-function TicketCard({ museo, fecha, personas }) {
+// "estado" y "codigo" son opcionales: sin ellos el ticket se muestra como vigente
+function TicketCard({ museo, fecha, personas, codigo, estado = "VIGENTE" }) {
+  const anulado = estado === "ANULADO";
+
   return (
     <div className="ticket-card flex-column flex-md-row gap-3">
       <div className="ticket-info">
@@ -6,11 +9,14 @@ function TicketCard({ museo, fecha, personas }) {
         <p>
           Fecha: {fecha} | Personas: {personas}
         </p>
-        <span className="ticket-status">Pagado &amp; Confirmado</span>
+        {codigo && <p className="mb-2">Código: <strong>{codigo}</strong></p>}
+        <span className="ticket-status">{anulado ? "Anulado" : "Pagado & Confirmado"}</span>
       </div>
-      <button className="btn-print" onClick={() => window.print()}>
-        Descargar PDF
-      </button>
+      {!anulado && (
+        <button className="btn-print" onClick={() => window.print()}>
+          Descargar PDF
+        </button>
+      )}
     </div>
   );
 }

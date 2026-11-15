@@ -1,24 +1,76 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useCallback, useEffect, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { api } from "../services/api";
 
-const museos = [
-  "Museo de Arte Contemporáneo",
-  "Museo de Historia Natural",
-  "Museo de Ciencia y Tecnología",
-  "Museo de Artes Visuales",
-];
+const clasesEstado = {
+  PENDIENTE: "text-bg-warning",
+  PAGADA: "text-bg-success",
+  CANCELADA: "text-bg-secondary",
+};
 
 function Reservas() {
   const navigate = useNavigate();
-  const [museo, setMuseo] = useState("");
+  const [museos, setMuseos] = useState([]);
+  const [museoId, setMuseoId] = useState("");
   const [fecha, setFecha] = useState("");
   const [personas, setPersonas] = useState(1);
+  const [mias, setMias] = useState([]);
+  const [error, setError] = useState("");
+  const [enviando, setEnviando] = useState(false);
 
-  const enviar = (e) => {
+  const cargarMias = useCallback(async () => {
+    try {
+      setMias(await api("/api/reservas/mis-reservas"));
+    } catch (e) {
+      setError(e.message);
+    }
+  }, []);
+
+  useEffect(() => {
+    let vigente = true;
+    api("/api/museos", { auth: false })
+      .then((datos) => {
+        if (vigente) setMuseos(datos.filter((m) => m.activo));
+      })
+      .catch((e) => {
+        if (vigente) setError(e.message);
+      });
+    cargarMias();
+    return () => {
+      vigente = false;
+    };
+  }, [cargarMias]);
+
+  const enviar = async (e) => {
     e.preventDefault();
-    const params = new URLSearchParams({ museo, fecha, personas });
-    navigate(`/pagos?${params.toString()}`);
+    setError("");
+    setEnviando(true);
+    try {
+      // El backend valida fecha, cupos y calcula el total; el frontend solo envía los datos
+      const reserva = await api("/api/reservas", {
+        metodo: "POST",
+        cuerpo: { museoId: Number(museoId), fecha, personas: Number(personas) },
+      });
+      navigate(`/pagos/${reserva.id}`);
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setEnviando(false);
+    }
   };
+
+  const cancelar = async (id) => {
+    if (!window.confirm("¿Seguro que quieres cancelar esta reserva?")) return;
+    setError("");
+    try {
+      await api(`/api/reservas/${id}`, { metodo: "DELETE" });
+      await cargarMias();
+    } catch (err) {
+      setError(err.message);
+    }
+  };
+
+  const hoy = new Date().toLocaleDateString("en-CA"); // AAAA-MM-DD en la hora local
 
   return (
     <main>
@@ -31,6 +83,12 @@ function Reservas() {
           </p>
         </div>
 
+        {error && (
+          <div className="alert alert-danger" role="alert">
+            {error}
+          </div>
+        )}
+
         <form className="form" onSubmit={enviar}>
           <div className="form__field">
             <label htmlFor="museo">Museo</label>
@@ -38,16 +96,16 @@ function Reservas() {
               className="form-select"
               id="museo"
               name="museo"
-              value={museo}
-              onChange={(e) => setMuseo(e.target.value)}
+              value={museoId}
+              onChange={(e) => setMuseoId(e.target.value)}
               required
             >
               <option value="" disabled>
                 Selecciona un museo
               </option>
               {museos.map((m) => (
-                <option key={m} value={m}>
-                  {m}
+                <option key={m.id} value={m.id}>
+                  {m.nombre}
                 </option>
               ))}
             </select>
@@ -62,6 +120,7 @@ function Reservas() {
                   type="date"
                   id="fecha"
                   name="fecha"
+                  min={hoy}
                   value={fecha}
                   onChange={(e) => setFecha(e.target.value)}
                   required
@@ -87,11 +146,64 @@ function Reservas() {
             </div>
           </div>
 
-          <button type="submit" className="form__submit">
-            Continuar al pago
+          <button type="submit" className="form__submit" disabled={enviando}>
+            {enviando ? "Reservando..." : "Continuar al pago"}
           </button>
         </form>
       </div>
+
+      <section className="container my-5">
+        <h2 className="h4 mb-3">Mis reservas</h2>
+        {mias.length === 0 ? (
+          <p>Aún no tienes reservas.</p>
+        ) : (
+          <div className="table-responsive">
+            <table className="table align-middle">
+              <thead>
+                <tr>
+                  <th>Museo</th>
+                  <th>Fecha</th>
+                  <th>Personas</th>
+                  <th>Total</th>
+                  <th>Estado</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody>
+                {mias.map((r) => (
+                  <tr key={r.id}>
+                    <td>{r.museoNombre}</td>
+                    <td>{r.fecha}</td>
+                    <td>{r.personas}</td>
+                    <td>${r.total.toLocaleString("es-CL")}</td>
+                    <td>
+                      <span className={`badge ${clasesEstado[r.estado] || "text-bg-light"}`}>
+                        {r.estado}
+                      </span>
+                    </td>
+                    <td className="text-end">
+                      {r.estado === "PENDIENTE" && (
+                        <Link className="btn btn-sm btn-dark me-2" to={`/pagos/${r.id}`}>
+                          Pagar
+                        </Link>
+                      )}
+                      {r.estado !== "CANCELADA" && (
+                        <button
+                          type="button"
+                          className="btn btn-sm btn-outline-danger"
+                          onClick={() => cancelar(r.id)}
+                        >
+                          Cancelar
+                        </button>
+                      )}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </section>
     </main>
   );
 }

@@ -1,20 +1,6 @@
-import { useSearchParams } from "react-router-dom";
+import { useEffect, useState } from "react";
 import TicketCard from "../components/TicketCard";
-
-const ticketsEjemplo = [
-  {
-    id: 1,
-    museo: "Museo de Arte Contemporáneo",
-    fecha: "25 de Septiembre, 2026",
-    personas: 2,
-  },
-  {
-    id: 2,
-    museo: "Museo de Historia Natural",
-    fecha: "02 de Octubre, 2026",
-    personas: 1,
-  },
-];
+import { api } from "../services/api";
 
 function formatearFecha(iso) {
   if (!iso) return "Por confirmar";
@@ -27,20 +13,26 @@ function formatearFecha(iso) {
 }
 
 function Tickets() {
-  const [searchParams] = useSearchParams();
-  const museoNuevo = searchParams.get("museo");
+  const [tickets, setTickets] = useState([]);
+  const [cargando, setCargando] = useState(true);
+  const [error, setError] = useState("");
 
-  const tickets = museoNuevo
-    ? [
-        {
-          id: "nuevo",
-          museo: museoNuevo,
-          fecha: formatearFecha(searchParams.get("fecha")),
-          personas: Number(searchParams.get("personas")) || 1,
-        },
-        ...ticketsEjemplo,
-      ]
-    : ticketsEjemplo;
+  useEffect(() => {
+    let vigente = true;
+    api("/api/tickets/mis-tickets")
+      .then((datos) => {
+        if (vigente) setTickets(datos);
+      })
+      .catch((e) => {
+        if (vigente) setError(e.message);
+      })
+      .finally(() => {
+        if (vigente) setCargando(false);
+      });
+    return () => {
+      vigente = false;
+    };
+  }, []);
 
   return (
     <main>
@@ -55,12 +47,26 @@ function Tickets() {
           Tus Entradas
         </h1>
 
+        {cargando && <p className="text-center">Cargando tickets...</p>}
+
+        {error && (
+          <div className="alert alert-danger" role="alert">
+            {error}
+          </div>
+        )}
+
+        {!cargando && !error && tickets.length === 0 && (
+          <p className="text-center">Todavía no tienes tickets. Reserva y paga una visita para obtener uno.</p>
+        )}
+
         {tickets.map((t) => (
           <TicketCard
             key={t.id}
             museo={t.museo}
-            fecha={t.fecha}
+            fecha={formatearFecha(t.fecha)}
             personas={t.personas}
+            codigo={t.codigo}
+            estado={t.estado}
           />
         ))}
       </div>

@@ -1,15 +1,30 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import MuseoCard from "../components/MuseoCard";
-
-const museos = [
-  { id: 1, sigla: "AC", nombre: "Museo de Arte Contemporáneo", zona: "Santiago Centro", desc: "Colecciones de arte moderno y exposiciones temporales de artistas nacionales." },
-  { id: 2, sigla: "HN", nombre: "Museo de Historia Natural", zona: "Providencia", desc: "Fósiles, minerales y muestras de flora y fauna de la región." },
-  { id: 3, sigla: "CT", nombre: "Museo de Ciencia y Tecnología", zona: "Ñuñoa", desc: "Salas interactivas sobre física, astronomía e innovación tecnológica." },
-  { id: 4, sigla: "AV", nombre: "Museo de Artes Visuales", zona: "Lastarria", desc: "Fotografía, escultura y muestras itinerantes de artistas emergentes." },
-];
+import { api } from "../services/api";
 
 function Museos() {
+  const [museos, setMuseos] = useState([]);
   const [busqueda, setBusqueda] = useState("");
+  const [cargando, setCargando] = useState(true);
+  const [error, setError] = useState("");
+
+  // Los museos vienen del backend (GET /api/museos, endpoint público)
+  useEffect(() => {
+    let vigente = true;
+    api("/api/museos", { auth: false })
+      .then((datos) => {
+        if (vigente) setMuseos(datos.filter((m) => m.activo));
+      })
+      .catch((e) => {
+        if (vigente) setError(e.message);
+      })
+      .finally(() => {
+        if (vigente) setCargando(false);
+      });
+    return () => {
+      vigente = false;
+    };
+  }, []);
 
   const filtrados = museos.filter((m) =>
     `${m.nombre} ${m.zona}`.toLowerCase().includes(busqueda.toLowerCase())
@@ -33,9 +48,19 @@ function Museos() {
         />
       </div>
 
-      {filtrados.length === 0 ? (
+      {cargando && <p className="text-center">Cargando museos...</p>}
+
+      {error && (
+        <div className="alert alert-danger text-center" role="alert">
+          {error}
+        </div>
+      )}
+
+      {!cargando && !error && filtrados.length === 0 && (
         <p className="text-center">No se encontraron museos.</p>
-      ) : (
+      )}
+
+      {filtrados.length > 0 && (
         <ul className="row g-4 list-unstyled p-0 m-0">
           {filtrados.map((m) => (
             <li className="col-12 col-sm-6 col-lg-3" key={m.id}>
@@ -43,7 +68,7 @@ function Museos() {
                 sigla={m.sigla}
                 nombre={m.nombre}
                 zona={m.zona}
-                desc={m.desc}
+                desc={m.descripcion}
               />
             </li>
           ))}
