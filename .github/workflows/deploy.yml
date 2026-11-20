@@ -1,0 +1,46 @@
+name: CI/CD frontend
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: despliegue-frontend
+  cancel-in-progress: false
+
+jobs:
+  probar:
+    name: Instalar, probar y compilar
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Pruebas unitarias (Karma + Jasmine, Firefox sin ventana)
+        run: npm test
+      - name: Compilar
+        run: npm run build
+
+  desplegar:
+    name: Construir y desplegar en el servidor
+    needs: probar
+    # Se ejecuta en el servidor casero, donde está instalado el runner de GitHub Actions
+    runs-on: self-hosted
+    steps:
+      - uses: actions/checkout@v4
+      - name: Construir la imagen Docker
+        # VITE_API_URL vacío: el frontend llama al backend por la misma dirección (nginx reenvía /api)
+        run: docker build --build-arg VITE_API_URL= -t museos-web:latest .
+      - name: Actualizar el contenedor web
+        working-directory: /opt/museos
+        run: |
+          docker compose up -d web
+          docker image prune -f
+          docker compose ps
