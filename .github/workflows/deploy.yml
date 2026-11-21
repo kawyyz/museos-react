@@ -1,3 +1,4 @@
+
 name: CI/CD frontend
 
 on:
@@ -16,31 +17,58 @@ jobs:
   probar:
     name: Instalar, probar y compilar
     runs-on: ubuntu-latest
+
     steps:
       - uses: actions/checkout@v4
+
       - uses: actions/setup-node@v4
         with:
           node-version: 22
           cache: npm
+
       - run: npm ci
-      - name: Pruebas unitarias (Karma + Jasmine, Firefox sin ventana)
+
+      - name: Pruebas unitarias
         run: npm test
+
       - name: Compilar
         run: npm run build
 
   desplegar:
-    name: Construir y desplegar en el servidor
+    name: Construir y desplegar en Ubuntu Server
     needs: probar
-    # Se ejecuta en el servidor casero, donde está instalado el runner de GitHub Actions
-    runs-on: self-hosted
+    if: github.ref == 'refs/heads/main'
+    runs-on: [self-hosted, Linux, X64, museos-frontend]
+
     steps:
       - uses: actions/checkout@v4
-      - name: Construir la imagen Docker
-        # VITE_API_URL vacío: el frontend llama al backend por la misma dirección (nginx reenvía /api)
+
+      - name: Construir imagen Docker
         run: docker build --build-arg VITE_API_URL= -t museos-web:latest .
-      - name: Actualizar el contenedor web
-        working-directory: /opt/museos
+
+      - name: Actualizar frontend
+        working-directory: /srv/servicios/museos
         run: |
-          docker compose up -d web
-          docker image prune -f
-          docker compose ps
+          set -e
+
+          flock /tmp/museos-deploy.lock -c '
+            docker compose up -d web
+
+            echo "Esperando que el frontend esté saludable..."
+
+            for i in $(seq 1 30); do
+              estado=$(docker inspect --format "{{.State.Health.Status}}" museos-web)
+
+              if [ "$estado" = "healthy" ]; then
+                echo "Frontend saludable"
+                docker compose ps
+                exit 0
+              fi
+
+              sleep 5
+            done
+
+            echo "El frontend no quedó saludable"
+            docker logs --tail 50 museos-web
+            exit 1
+          '
